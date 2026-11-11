@@ -1,36 +1,56 @@
-{% set version = "1.12" %}
+{% set version = "25.10.0" %}
+{% set name = "webcolors" %}
 
 package:
-  name: webcolors
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  fn: webcolors-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/w/webcolors/webcolors-{{ version }}.tar.gz
-  sha256: 16d043d3a08fd6a1b1b7e3e9e62640d09790dce80d2bdd4792a175b35fe794a9
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 62abae86504f66d0f6364c2a8520de4a0c47b80c03fc3a5f1815fedbef7c19bf
 
 build:
   number: 0
-  noarch: python
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
+  skip: true # [py<310]
+  script: {{ PYTHON }} -m pip install . --no-deps -vv --no-build-isolation
 
 requirements:
   host:
-    - python >=3.5
+    - pdm-backend
+    - python
     - pip
-
   run:
-    - python >=3.5
+    - python
 
 test:
+  source_files:
+    - tests
   imports:
     - webcolors
+  requires:
+    - pip
+    - pytest
+  commands:
+    - pip check
+    - pytest -vv
 
 about:
   home: https://github.com/ubernostrum/webcolors
   license: BSD-3-Clause
   license_file: LICENSE
+  license_family: BSD
   summary: Library for working with HTML/CSS color formats in Python.
+  description: |
+    webcolors is a module for working with and converting between the various HTML/CSS color formats.
+    Support is included for normalizing and converting between the following formats
+    (RGB colorspace only; conversion to/from HSL can be handled by the colorsys module in the Python standard library):
+     - Specification-defined color names
+     - Six-digit hexadecimal
+     - Three-digit hexadecimal
+     - Integer rgb() triplet
+     - Percentage rgb() triplet
+  dev_url: https://github.com/ubernostrum/webcolors
+  doc_url: https://webcolors.readthedocs.io/en/stable/
 
 extra:
   recipe-maintainers:
